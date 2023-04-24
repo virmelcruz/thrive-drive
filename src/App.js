@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import GlobalStyle from './globalStyles';
+import { BodyContainer, BodyCard } from './App.styles';
+import { Outlet } from 'react-router-dom';
+import { BreadCrumbs } from './components';
+import { AppContext, useAppState } from './AppContext';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 function App() {
+  const value = useAppState();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContext.Provider value={value}>
+      <GlobalStyle />
+      <BodyContainer>
+        <BodyCard>
+          <BreadCrumbs />
+          <Outlet />
+        </BodyCard>
+        
+      </BodyContainer>
+    </AppContext.Provider>
   );
 }
 
