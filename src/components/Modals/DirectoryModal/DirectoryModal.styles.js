@@ -24,17 +24,8 @@ const StyledActionBar = styled.div`
   justify-content: right;
 `
 
-const StyledInput = styled.input`
-  border: 1px solid #555;
-  border-radius: 3px;
-  width: 250px;
-  height: 20px;
-  margin: 10px 0;
-`
-
 export {
   customStyles,
   StyledCloseButton,
   StyledActionBar,
-  StyledInput,
 }

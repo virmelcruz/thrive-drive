@@ -4,9 +4,10 @@ import {
   customStyles,
   StyledCloseButton,
   StyledActionBar,
+  StyledInput,
 } from './InputModal.styles';
 
-const InputModal = ({ isOpen, onClose, text='', subText=''}) => {
+const InputModal = ({ isOpen, onClose, onConfirm, text='', subText=''}) => {
 
   const [fileName, setFileName] = useState('');
 
@@ -18,6 +19,11 @@ const InputModal = ({ isOpen, onClose, text='', subText=''}) => {
     onClose();
   }
 
+  const handleOnConfirm = () => {
+    onConfirm(fileName);
+    setFileName('');
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -27,9 +33,9 @@ const InputModal = ({ isOpen, onClose, text='', subText=''}) => {
       <h3>
         {text}
       </h3>
-      <input value={fileName} onChange={(e) => { handleOnChange(e) }} />
+      <StyledInput value={fileName} onChange={(e) => { handleOnChange(e) }} />
       <StyledActionBar>
-        <button onClick={handleOnClose}> Ok </button>
+        <button onClick={handleOnConfirm}> Ok </button>
       </StyledActionBar>
     </Modal>
   );

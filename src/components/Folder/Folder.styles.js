@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 
 const FolderContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  max-height: calc(100% - 60px);
 `
 
 const FolderItem = styled.div`
@@ -24,7 +27,7 @@ const FolderItem = styled.div`
   }
 `
 
-const FolderLinkItem = styled(Link)`
+const FolderLinkItem = styled.div`
   align-items: center;
   border-radius: 10px;
   cursor: pointer;

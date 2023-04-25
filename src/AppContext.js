@@ -1,12 +1,16 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, } from "react";
 import ReactDOM from "react-dom/client";
+import useAppReducer from "./useAppReducer";
 
 const AppContext = createContext();
 
-const initialState = [{ name: 'Home', hasChild: false, id: 'home', index: 1, }];
+const initialState = [{ name: 'Home', hasChild: false, _id: 'home', index: 1, parentId: ''}];
 
 const useAppState = () => {
   const [breadCrumbs, setBreadCrumbs] = useState(initialState);
+  const lastCrumb = breadCrumbs.slice(-1)[0];
+  const filesReducer = useAppReducer();
+  const [currentDir, setCurrentDir] = useState('home');
 
   const setIncreaseCrumbs = (crumbs) => {
     const newCrumbs = [...breadCrumbs, ...crumbs];
@@ -15,9 +19,10 @@ const useAppState = () => {
   }
 
   const setDecreaseCrumbs = (newCrumbs) => {
-    newCrumbs[0].hasChild = !newCrumbs.length <= 1;
-    console.log('newCrumbs', newCrumbs)
-    setBreadCrumbs([...newCrumbs]);
+    if (newCrumbs.length) {
+      newCrumbs[0].hasChild = !newCrumbs.length <= 1;
+      setBreadCrumbs([...newCrumbs]);
+    }
   }
 
   const resetCrumbs = () => {
@@ -26,23 +31,26 @@ const useAppState = () => {
 
   const jumpCrumbs = (crumbId, currentIndex) => {
     const newCrumbs = breadCrumbs.reduce((prevVal, currVal, index) => {
-      if ((currVal.id !== crumbId && index < currentIndex) || currVal.id === crumbId) {
+      if ((currVal._id !== crumbId && index < currentIndex) || currVal._id === crumbId) {
         return [...prevVal, { ...currVal, index }]
       }
 
       return prevVal;
       
     }, []);
-    console.log('jump crumbs', newCrumbs);
     setBreadCrumbs(newCrumbs);
   }
 
   return {
+    filesReducer,
     breadCrumbs,
+    lastCrumb,
     setIncreaseCrumbs,
     setDecreaseCrumbs,
     resetCrumbs,
     jumpCrumbs,
+    currentDir,
+    setCurrentDir,
   }
 }
 

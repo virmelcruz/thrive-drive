@@ -1,45 +1,64 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { FolderContainer, FolderItem, FolderLinkItem } from './Folder.styles';
 import { FaRegFolder, FaPlus, FaRegFile, FaEllipsisH } from 'react-icons/fa'
 import PropTypes from 'prop-types';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppState, AppContext } from '../../AppContext';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../AppContext';
 
-const Folder = ({ files }) => {
-  const location = useLocation();
+const Folder = ({ files, parentId = '', isPage = true }) => {
+  const filteredFiles = isPage ? files : files.filter((file) => file.fileType === 'folder');
   const navigate = useNavigate();
-  const { breadCrumbs, setIncreaseCrumbs, setDecreaseCrumbs } = useContext(AppContext);
+  const {
+    breadCrumbs,
+    setIncreaseCrumbs,
+    setDecreaseCrumbs,
+    setCurrentDir,
+  } = useContext(AppContext);
   
 
-  const setBreadCrumbsForwardChange = (file) => {
-    console.log('set bread crumbs', file);
-    setIncreaseCrumbs([{ name: file.name, hasChild: true, id: file.id, index: breadCrumbs.length + 1}]);
+  const setFolderForwardChange = (file) => {
+    if (isPage) {
+      setIncreaseCrumbs([{
+        ...file,
+        hasChild: true,
+        index: breadCrumbs.length + 1,
+      }]);
+
+      navigate(`/folders/${file._id}`);
+    } else {
+      setCurrentDir(file._id);
+    }
   };
 
-  const setBreadCrumbsBackwardChange = () => {
-    const newCrumbs = [...breadCrumbs];
-    newCrumbs.pop();
-    setDecreaseCrumbs(newCrumbs);
-    navigate(-1)
+  const setFolderBackwardChange = () => {
+    if (isPage) {
+      const newCrumbs = [...breadCrumbs];
+      newCrumbs.pop();
+      setDecreaseCrumbs(newCrumbs);
+      navigate(-1)
+    } else {
+      console.log('parentId', parentId);
+      setCurrentDir(parentId);
+    }
   };
 
   return (
     <FolderContainer>
-      { location.pathname !== '/' && (
-        <FolderItem onClick={() => { setBreadCrumbsBackwardChange() }}>
+      { parentId !== '' && (
+        <FolderItem onClick={() => { setFolderBackwardChange() }}>
           <FaEllipsisH size={30}/>
         </FolderItem>
       )}
-      { location.pathname === '/' && (
+      { parentId === '' && (
         <FolderItem>
           <FaPlus size={30}/>
         </FolderItem>
       )}
-      {files.map(file => (
-        <FolderLinkItem to={`/folders/${file.id}`} onClick={() => setBreadCrumbsForwardChange(file)} key={file.id}>
+      {filteredFiles.map(file => (
+        <FolderItem onClick={() => setFolderForwardChange(file)} key={file._id}>
           {file.fileType === 'folder' ? <FaRegFolder size={30}/> : <FaRegFile size={30}/>}
           {file.name}
-        </FolderLinkItem>
+        </FolderItem>
       ))}
     </FolderContainer>
   );

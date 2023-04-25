@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import Folder from '../../components/Folder';
 import { useParams } from 'react-router-dom';
-import useAppReducer from '../../useAppReducer';
 import { useLocation } from 'react-router-dom';
+import { AppContext } from '../../AppContext';
 
 const DirectoryPage = () => {
-  const { folderId } = useParams();
-  let files = useAppReducer(folderId);
+  const location = useLocation();
+  const { filesReducer, lastCrumb } = useContext(AppContext);
+
+  useEffect(() => {
+    console.log('nag fetch ng file sa Directory', filesReducer);
+    filesReducer.getFiles(lastCrumb._id);
+  }, [location])
 
   return (
-    <Folder files={files.results}/>
+    <Folder files={filesReducer.results} parentId={filesReducer.parentId} isPage/>
   );
 };
 
