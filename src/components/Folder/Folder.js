@@ -13,6 +13,8 @@ const Folder = ({ files, parentId = '', isPage = true }) => {
     setIncreaseCrumbs,
     setDecreaseCrumbs,
     setCurrentDir,
+    filesReducer,
+    currentDir,
   } = useContext(AppContext);
   
 
@@ -44,6 +46,9 @@ const Folder = ({ files, parentId = '', isPage = true }) => {
 
   return (
     <FolderContainer>
+      {filesReducer.fileInfo._id}
+      <br />
+      {currentDir}
       { parentId !== '' && (
         <FolderItem onClick={() => { setFolderBackwardChange() }}>
           <FaEllipsisH size={30}/>
@@ -55,7 +60,11 @@ const Folder = ({ files, parentId = '', isPage = true }) => {
         </FolderItem>
       )}
       {filteredFiles.map(file => (
-        <FolderItem onClick={() => setFolderForwardChange(file)} key={file._id}>
+        <FolderItem
+          onClick={() => setFolderForwardChange(file)}
+          key={file._id}
+          disabled={(!isPage && filesReducer.fileInfo._id === currentDir)}
+        >
           {file.fileType === 'folder' ? <FaRegFolder size={30}/> : <FaRegFile size={30}/>}
           {file.name}
         </FolderItem>

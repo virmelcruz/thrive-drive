@@ -8,9 +8,8 @@ const FolderContainer = styled.div`
   max-height: calc(100% - 60px);
 `
 
-const FolderItem = styled.div`
+const FolderItem = styled.button`
   align-items: center;
-  border-radius: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -21,6 +20,8 @@ const FolderItem = styled.div`
   text-decoration: none;
   color: #555;
   text-decoration: none;
+  background: none;
+  border: none;
 
   :hover {
     background-color: rgb(233 233 233);

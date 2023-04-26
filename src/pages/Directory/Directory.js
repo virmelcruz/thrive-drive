@@ -14,7 +14,7 @@ const DirectoryPage = () => {
   }, [location])
 
   return (
-    <Folder files={filesReducer.results} parentId={filesReducer.parentId} isPage/>
+    <Folder files={filesReducer.results} parentId={filesReducer.fileInfo.parentId} isPage/>
   );
 };
 

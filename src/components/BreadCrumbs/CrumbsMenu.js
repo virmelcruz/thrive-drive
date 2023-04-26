@@ -6,7 +6,7 @@ import { ConfirmationModal, InputModal, DirectoryModal } from '../Modals'
 import { useAppState, AppContext } from '../../AppContext';
 
 const CrumbsMenu = () => {
-  const { breadCrumbs = [], filesReducer } = useContext(AppContext);
+  const { breadCrumbs = [], filesReducer, currentDir, } = useContext(AppContext);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isInputModalOpen, setIsInputModalOpen] = useState('');
   const [isDirectoryModalOpen, setIsDirectoryModalOpen] = useState(false);
@@ -23,7 +23,10 @@ const CrumbsMenu = () => {
   if (breadCrumbs.length > 1) {
     menuItem.push({
       label: 'Move',
-      onClick: () => { setIsDirectoryModalOpen(true) },
+      onClick: () => { 
+        console.log('currentDir', currentDir);
+        setIsDirectoryModalOpen(true);
+      },
     }, {
       label: 'Delete Location',
       onClick: () => {},
@@ -40,13 +43,21 @@ const CrumbsMenu = () => {
 
   const handleInputModalConfirm = (fileName) => {
     const crumbsPath = breadCrumbs.map(({ _id, name }) => `${name}:${_id}`).join('/');
-    filesReducer.createFiles({
+    filesReducer.createUpdateFiles({
       name: fileName,
       parentId: lastCrumb._id,
       path: crumbsPath,
       fileType: isInputModalOpen.split(':')[0],
     });
     setIsInputModalOpen('');
+  }
+
+  const handleDirectoryModalConfirm = (parentId) => {
+    filesReducer.createUpdateFiles({
+      ...filesReducer.fileInfo,
+      parentId,
+    }, 'patch');
+    setIsDirectoryModalOpen(false);
   }
 
   return (
@@ -69,6 +80,7 @@ const CrumbsMenu = () => {
         text="Select new location"
         isOpen={isDirectoryModalOpen}
         onClose={() => { setIsDirectoryModalOpen(false) }}
+        onConfirm={handleDirectoryModalConfirm}
       />
     </>
   );

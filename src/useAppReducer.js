@@ -9,8 +9,9 @@ const initialState = {
   totalResutls: 0,
   isGetloading: true,
   getError: null,
-  isPostloading: true,
+  isPostPatchLoading: true,
   postError: null,
+  fileInfo: {},
 };
 
 const GET_ACTIONS = {
@@ -19,10 +20,10 @@ const GET_ACTIONS = {
   ERROR: 'get-error',
 };
 
-const POST_ACTIONS = {
-  CALL_API: 'post-call-api',
-  SUCCESS: 'post-success',
-  ERROR: 'post-error',
+const POST_PATCH_ACTIONS = {
+  CALL_API: 'post-patch-call-api',
+  SUCCESS: 'post-patch-success',
+  ERROR: 'post-patch-error',
 };
 
 const useAppReducer = () => {
@@ -43,16 +44,17 @@ const useAppReducer = () => {
     getAPIFiles();
   };
 
-  const createFiles = (file) => {
-    dispatch({ type: POST_ACTIONS.CALL_API });
+  const createUpdateFiles = (file, method = 'post') => {
+    dispatch({ type: POST_PATCH_ACTIONS.CALL_API });
     const postAPIFiles = async () => {
-        axios.defaults.baseURL = 'http://localhost:3001/v1'
-        let response = await axios.post(`/files`, file);
-        if (response.status === 201) {
-            dispatch({ type: POST_ACTIONS.SUCCESS, data: response.data });
-            return;
-        }
-        dispatch({ type: POST_ACTIONS.ERROR, error: response.error });
+      const apiUrl = method === 'post' ? '/files' : `/files/${file._id}`;
+      axios.defaults.baseURL = 'http://localhost:3001/v1'
+      let response = await axios({ method, url: apiUrl, data: file });
+      if (response.status === 201) {
+          dispatch({ type: POST_PATCH_ACTIONS.SUCCESS, data: response.data });
+          return;
+      }
+      dispatch({ type: POST_PATCH_ACTIONS.ERROR, error: response.error });
     };
 
     postAPIFiles();
@@ -61,7 +63,7 @@ const useAppReducer = () => {
   return {
     ...state,
     getFiles,
-    createFiles, 
+    createUpdateFiles, 
   }
 
 }
@@ -88,13 +90,13 @@ const filesReducer = (state, action) => {
         getError: action.error,
       };
     }
-    case POST_ACTIONS.CALL_API: {
+    case POST_PATCH_ACTIONS.CALL_API: {
       return {
         ...state,
-        isPostloading: true,
+        isPostPatchLoading: true,
       };
     }
-    case POST_ACTIONS.SUCCESS: {
+    case POST_PATCH_ACTIONS.SUCCESS: {
       const newResults = [
         action.data,
         ...state.results,
@@ -102,13 +104,13 @@ const filesReducer = (state, action) => {
       return {
         ...state,
         results: newResults,
-        isPostloading: false,
+        isPostPatchLoading: false,
       };
     }
-    case POST_ACTIONS.ERROR: {
+    case POST_PATCH_ACTIONS.ERROR: {
       return {
         ...state,
-        isPostloading: false,
+        isPostPatchLoading: false,
         error: action.error,
       };
     }
