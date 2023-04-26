@@ -4,7 +4,6 @@ import { customStyles, StyledCloseButton, StyledActionBar } from './DirectoryMod
 import Folder from '../../Folder';
 import useAppReducer from '../../../useAppReducer';
 import { AppContext } from '../../../AppContext';
-import { useParams } from 'react-router-dom';
 
 const DirectoryModal = ({ isOpen, onClose, text='', subText='', onConfirm }) => {
   const { filesReducer, currentDir, setCurrentDir } = useContext(AppContext);

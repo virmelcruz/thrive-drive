@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import Crumbs from './Crumbs';
 import { BreadCrumbsContainer } from './BreadCrumbs.styles';
 import CrumbsMenu from './CrumbsMenu';

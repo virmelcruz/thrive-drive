@@ -1,16 +1,18 @@
 import React, { useState, useContext } from 'react';
 import { Menu, MenuItem } from '@szhsin/react-menu';
 import { FaEllipsisV } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom';
 import { StyledMenuBtn } from './CrumbsMenu.styles';
-import { ConfirmationModal, InputModal, DirectoryModal } from '../Modals'
-import { useAppState, AppContext } from '../../AppContext';
+import { ConfirmationModal, InputModal, DirectoryModal } from '../Modals';
+import { AppContext } from '../../AppContext';
 
 const CrumbsMenu = () => {
-  const { breadCrumbs = [], filesReducer, currentDir, } = useContext(AppContext);
+  const { breadCrumbs = [], filesReducer, jumpCrumbs } = useContext(AppContext);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isInputModalOpen, setIsInputModalOpen] = useState('');
   const [isDirectoryModalOpen, setIsDirectoryModalOpen] = useState(false);
   const lastCrumb = breadCrumbs.slice(-1)[0];
+  const navigate = useNavigate();
 
   const menuItem = [{
     label: 'Add Location',
@@ -24,17 +26,14 @@ const CrumbsMenu = () => {
     menuItem.push({
       label: 'Move',
       onClick: () => { 
-        console.log('currentDir', currentDir);
         setIsDirectoryModalOpen(true);
       },
     }, {
-      label: 'Delete Location',
-      onClick: () => {},
+      label: 'Delete',
+      onClick: () => {
+        setIsConfirmationModalOpen(true);
+      },
     });
-  }
-
-  const handleConfirmationModalOpen = () => {
-    setIsConfirmationModalOpen(true);
   }
 
   const handleInputModalOpen = (operation) => {
@@ -60,6 +59,13 @@ const CrumbsMenu = () => {
     setIsDirectoryModalOpen(false);
   }
 
+  const handleDelete = () => {
+    filesReducer.deleteFile(lastCrumb._id);
+    setIsConfirmationModalOpen(false);
+    navigate(`/folders/${lastCrumb.parentId}`);
+    jumpCrumbs(lastCrumb.parentId, lastCrumb.index - 1);
+  }
+
   return (
     <>
       <Menu menuButton={<StyledMenuBtn> <FaEllipsisV /> </StyledMenuBtn>} transition>
@@ -69,6 +75,7 @@ const CrumbsMenu = () => {
         text="Are you sure you want to delete?"
         isOpen={isConfirmationModalOpen}
         onClose={() => { setIsConfirmationModalOpen(false) }}
+        onConfirm={handleDelete}
       />
       <InputModal
         text={isInputModalOpen === 'folder' ? 'New Folder' : 'File Name'}

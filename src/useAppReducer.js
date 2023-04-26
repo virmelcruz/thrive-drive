@@ -12,6 +12,7 @@ const initialState = {
   isPostPatchLoading: true,
   postError: null,
   fileInfo: {},
+  isDeleteLoading: true,
 };
 
 const GET_ACTIONS = {
@@ -24,6 +25,12 @@ const POST_PATCH_ACTIONS = {
   CALL_API: 'post-patch-call-api',
   SUCCESS: 'post-patch-success',
   ERROR: 'post-patch-error',
+};
+
+const DELETE_ACTIONS = {
+  CALL_API: 'delete-call-api',
+  SUCCESS: 'delete-success',
+  ERROR: 'delete-error',
 };
 
 const useAppReducer = () => {
@@ -60,10 +67,28 @@ const useAppReducer = () => {
     postAPIFiles();
   };
 
+  const deleteFile = (fileId = '') => {
+    if (fileId !== 'home' || fileId !== '') {
+      dispatch({ type: DELETE_ACTIONS.CALL_API });
+      const deleteAPIFiles = async () => {
+          axios.defaults.baseURL = 'http://localhost:3001/v1';
+          let response = await axios.delete(`/files/${fileId}`);
+          if (response.status === 200) {
+              dispatch({ type: DELETE_ACTIONS.SUCCESS, data: { fileId } });
+              return;
+          }
+          dispatch({ type: DELETE_ACTIONS.ERROR, error: response.error });
+      };
+
+      deleteAPIFiles();
+    }
+  };
+
   return {
     ...state,
     getFiles,
     createUpdateFiles, 
+    deleteFile,
   }
 
 }
@@ -111,6 +136,25 @@ const filesReducer = (state, action) => {
       return {
         ...state,
         isPostPatchLoading: false,
+        error: action.error,
+      };
+    }
+    case DELETE_ACTIONS.CALL_API: {
+      return {
+        ...state,
+        isDeleteLoading: true,
+      };
+    }
+    case DELETE_ACTIONS.SUCCESS: {
+      return {
+        ...state,
+        isDeleteLoading: false,
+      };
+    }
+    case DELETE_ACTIONS.ERROR: {
+      return {
+        ...state,
+        isDeleteLoading: false,
         error: action.error,
       };
     }

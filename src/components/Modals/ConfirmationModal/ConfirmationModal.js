@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import { customStyles, StyledCloseButton, StyledActionBar } from './ConfirmationModal.styles';
 
-const ConfirmationModal = ({ isOpen, onClose, text='', subText=''}) => {
+const ConfirmationModal = ({ isOpen, onClose, text='', subText='', onConfirm}) => {
   
   const handleOnClose = () => {
     onClose();
@@ -20,7 +19,7 @@ const ConfirmationModal = ({ isOpen, onClose, text='', subText=''}) => {
       </h3>
       <div>{subText}</div>
       <StyledActionBar>
-        <button onClick={handleOnClose}> Ok </button>
+        <button onClick={onConfirm}> Ok </button>
       </StyledActionBar>
     </Modal>
   );

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { FolderContainer, FolderItem, FolderLinkItem } from './Folder.styles';
-import { FaRegFolder, FaPlus, FaRegFile, FaEllipsisH } from 'react-icons/fa'
+import { FolderContainer, FolderItem } from './Folder.styles';
+import { FaRegFolder, FaRegFile, FaEllipsisH } from 'react-icons/fa'
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
@@ -37,26 +37,17 @@ const Folder = ({ files, parentId = '', isPage = true }) => {
       const newCrumbs = [...breadCrumbs];
       newCrumbs.pop();
       setDecreaseCrumbs(newCrumbs);
-      navigate(-1)
+      navigate(-1);
     } else {
-      console.log('parentId', parentId);
       setCurrentDir(parentId);
     }
   };
 
   return (
     <FolderContainer>
-      {filesReducer.fileInfo._id}
-      <br />
-      {currentDir}
       { parentId !== '' && (
         <FolderItem onClick={() => { setFolderBackwardChange() }}>
           <FaEllipsisH size={30}/>
-        </FolderItem>
-      )}
-      { parentId === '' && (
-        <FolderItem>
-          <FaPlus size={30}/>
         </FolderItem>
       )}
       {filteredFiles.map(file => (

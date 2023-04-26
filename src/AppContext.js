@@ -1,5 +1,4 @@
-import { useState, createContext, useEffect, } from "react";
-import ReactDOM from "react-dom/client";
+import { useState, createContext } from "react";
 import useAppReducer from "./useAppReducer";
 
 const AppContext = createContext();
